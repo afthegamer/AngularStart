@@ -5,7 +5,9 @@
   "projects": {
     "AngularStart": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": { "type": "component" }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -88,5 +90,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "521162d6-a22e-499d-900b-fed218caebc9"
   }
 }
