@@ -1,6 +1,16 @@
 <section class="w-full max-w-md mx-auto">
   <h2 class="text-2xl font-semibold mb-4">Mes tâches</h2>
 
+  <p>
+    Aujourd’hui : {{ today | date:'fullDate' }}
+  </p>
+  <p>
+    Exemple majuscule : {{ 'bonjour' | uppercase }}
+  </p>
+  <p>
+    Pourcentage : {{ 0.376 | percent:'1.0-2' }}
+  </p>
+
   <form
     class="flex gap-2 mb-4"
     (submit)="add(task.value); task.value=''; $event.preventDefault()"
@@ -25,9 +35,12 @@
       *ngFor="let t of todos()"
       (click)="toggle(t)"
       [class.line-through]="t.done"
-      class="cursor-pointer py-1"
+      class="cursor-pointer py-1 hover:bg-slate-100"
     >
-      {{ t.label }}
+      {{ t.label | capitalize }}
+      <span class="text-xs text-gray-500 ml-2">
+        ({{ t.createdAt | date:'shortTime' }})
+      </span>
     </li>
   </ul>
 

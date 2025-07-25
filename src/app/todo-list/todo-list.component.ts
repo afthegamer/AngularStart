@@ -1,20 +1,24 @@
 import { Component, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';// Ancienne syntaxe
+import {CapitalizePipe} from '../shared/capitalize-pipe';
+
 
 interface Todo {
   id: number;
   label: string;
   done: boolean;
+  createdAt: Date;
 }
 
 @Component({
   selector: 'app-todo-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, CapitalizePipe], // Ancienne syntaxe
   templateUrl: './todo-list.component.html',
-  styleUrls: ['./todo-list.component.css'],   // fichier vide accepté
+  styleUrls: ['./todo-list.component.css'],
 })
 export class TodoListComponent {
+  today = new Date();
   private nextId = 1;
   todos = signal<Todo[]>([]);
 
@@ -23,7 +27,7 @@ export class TodoListComponent {
     if (!trimmed) return;
     this.todos.update(list => [
       ...list,
-      { id: this.nextId++, label: trimmed, done: false },
+      { id: this.nextId++, label: trimmed, done: false, createdAt: new Date() },
     ]);
   }
 
