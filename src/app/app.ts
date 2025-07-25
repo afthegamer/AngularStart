@@ -1,14 +1,19 @@
+// src/app/app.ts
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import {RouterOutlet} from '@angular/router';
+import {TodoListComponent} from './todo-list/todo-list.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrls: ['./app.css'],
+  imports: [
+    RouterOutlet,
+    TodoListComponent
+  ],
+  // ← pluriel recommandé
 })
 export class App {
-  protected readonly title = signal('AngularStart');
-  protected readonly greeting  = signal('Bonjour Angular 20 🎉');
+  protected readonly greeting = signal('Bonjour Angular 20 🎉');
 }

@@ -1,0 +1,37 @@
+<section class="w-full max-w-md mx-auto">
+  <h2 class="text-2xl font-semibold mb-4">Mes tâches</h2>
+
+  <form
+    class="flex gap-2 mb-4"
+    (submit)="add(task.value); task.value=''; $event.preventDefault()"
+  >
+    <input
+      #task
+      class="flex-1 border p-2 rounded-lg"
+      placeholder="Nouvelle tâche"
+    />
+    <button
+      type="submit"
+      class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+    >
+      Ajouter
+    </button>
+  </form>
+
+  <p *ngIf="!todos().length" class="italic text-gray-500">Aucune tâche</p>
+
+  <ul>
+    <li
+      *ngFor="let t of todos()"
+      (click)="toggle(t)"
+      [class.line-through]="t.done"
+      class="cursor-pointer py-1"
+    >
+      {{ t.label }}
+    </li>
+  </ul>
+
+  <p class="mt-4 text-sm text-gray-600">
+    {{ remaining() }} tâche(s) restante(s)
+  </p>
+</section>
