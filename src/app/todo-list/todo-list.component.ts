@@ -1,41 +1,25 @@
-import { Component, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';// Ancienne syntaxe
-import {CapitalizePipe} from '../shared/capitalize-pipe';
-
-
-interface Todo {
-  id: number;
-  label: string;
-  done: boolean;
-  createdAt: Date;
-}
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { CapitalizePipe } from '../shared/capitalize-pipe'; // ton chemin exact
+import { TodoService } from '../todo.service';
 
 @Component({
   selector: 'app-todo-list',
   standalone: true,
-  imports: [CommonModule, CapitalizePipe], // Ancienne syntaxe
+  imports: [CommonModule, CapitalizePipe],
   templateUrl: './todo-list.component.html',
   styleUrls: ['./todo-list.component.css'],
 })
 export class TodoListComponent {
   today = new Date();
-  private nextId = 1;
-  todos = signal<Todo[]>([]);
+
+  constructor(public todoService: TodoService) {}
 
   add(label: string) {
-    const trimmed = label.trim();
-    if (!trimmed) return;
-    this.todos.update(list => [
-      ...list,
-      { id: this.nextId++, label: trimmed, done: false, createdAt: new Date() },
-    ]);
+    this.todoService.add(label);
   }
 
-  toggle(todo: Todo) {
-    this.todos.update(list =>
-      list.map(t => (t.id === todo.id ? { ...t, done: !t.done } : t)),
-    );
+  toggle(todo: any) {
+    this.todoService.toggle(todo);
   }
-
-  remaining = computed(() => this.todos().filter(t => !t.done).length);
 }

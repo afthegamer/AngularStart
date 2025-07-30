@@ -28,23 +28,24 @@
     </button>
   </form>
 
-  <p *ngIf="!todos().length" class="italic text-gray-500">Aucune tâche</p>
+  <p *ngIf="!todoService.todos().length" class="italic text-gray-500">Aucune tâche</p>
 
   <ul>
     <li
-      *ngFor="let t of todos()"
+      *ngFor="let t of todoService.todos()"
       (click)="toggle(t)"
       [class.line-through]="t.done"
       class="cursor-pointer py-1 hover:bg-slate-100"
     >
       {{ t.label | capitalize }}
       <span class="text-xs text-gray-500 ml-2">
-        ({{ t.createdAt | date:'shortTime' }})
-      </span>
+      ({{ t.createdAt | date:'shortTime' }})
+    </span>
     </li>
   </ul>
 
   <p class="mt-4 text-sm text-gray-600">
-    {{ remaining() }} tâche(s) restante(s)
+    {{ todoService.remaining() }} tâche(s) restante(s)
   </p>
+
 </section>
