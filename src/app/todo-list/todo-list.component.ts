@@ -18,6 +18,12 @@ export class TodoListComponent {
   add(label: string) {
     this.todoService.add(label);
   }
+  delete(todoId: number) {
+    // Demande de confirmation (méthode simple JS)
+    if (confirm('Supprimer cette tâche ?')) {
+      this.todoService.delete(todoId);
+    }
+  }
 
   toggle(todo: any) {
     this.todoService.toggle(todo);

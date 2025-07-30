@@ -36,6 +36,11 @@ export class TodoService {
   save() {
     localStorage.setItem('todos', JSON.stringify(this.todos()));
   }
+  delete(todoId: number) {
+    this.todos.update(list => list.filter(t => t.id !== todoId));
+    this.save();
+  }
+
 
   load() {
     const data = localStorage.getItem('todos');
