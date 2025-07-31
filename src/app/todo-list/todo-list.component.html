@@ -54,38 +54,57 @@
   <ul>
     <li
       *ngFor="let t of filteredTodos"
-      class="cursor-pointer py-1 hover:bg-slate-100 flex justify-between items-center"
+      class="py-1 hover:bg-slate-100 flex items-center justify-between"
     >
-      <ng-container *ngIf="editId !== t.id; else editMode">
-    <span (dblclick)="startEdit(t.id)" [class.line-through]="t.done">
-      {{ t.label | capitalize }}
-      <span class="text-xs text-gray-500 ml-2">
-        ({{ t.createdAt | date:'shortTime' }})
+      <div class="flex items-center flex-1 min-w-0">
+        <!-- Checkbox de complétion -->
+        <input
+          type="checkbox"
+          [checked]="t.done"
+          (change)="toggle(t)"
+          class="mr-2 accent-green-600"
+          [disabled]="editId === t.id"
+          title="Marquer comme terminée"
+        />
+
+        <!-- Mode édition ou affichage -->
+        <ng-container *ngIf="editId !== t.id; else editMode">
+      <span
+        (dblclick)="startEdit(t.id)"
+        [class.line-through]="t.done"
+        [class.text-gray-400]="t.done"
+        class="truncate"
+        title="Double-clique pour éditer"
+      >
+        {{ t.label | capitalize }}
+        <span class="text-xs text-gray-500 ml-2">
+          ({{ t.createdAt | date:'shortTime' }})
+        </span>
       </span>
-    </span>
-        <button
-          type="button"
-          (click)="delete(t.id); $event.stopPropagation()"
-          class="ml-2 text-red-600 hover:text-red-800 p-1 rounded-full hover:bg-red-100 transition"
-          title="Supprimer"
-        >🗑️</button>
-      </ng-container>
-      <ng-template #editMode>
-        <form
-          class="flex-1 flex gap-2"
-          (submit)="saveEdit(t, editInput); $event.preventDefault()"
-        >
-          <input
-            #editInput
-            [value]="t.label"
-            class="flex-1 border p-1 rounded"
-            (blur)="saveEdit(t, editInput)"
-            autofocus
-          />
-          <button type="submit" class="text-green-600 hover:text-green-800">✔️</button>
-          <button type="button" (click)="endEdit()" class="text-gray-600 ml-1">✖️</button>
-        </form>
-      </ng-template>
+        </ng-container>
+        <ng-template #editMode>
+          <form
+            class="flex-1 flex gap-2"
+            (submit)="saveEdit(t, editInput); $event.preventDefault()"
+          >
+            <input
+              #editInput
+              [value]="t.label"
+              class="flex-1 border p-1 rounded"
+              (blur)="saveEdit(t, editInput)"
+              autofocus
+            />
+            <button type="submit" class="text-green-600 hover:text-green-800">✔️</button>
+            <button type="button" (click)="endEdit()" class="text-gray-600 ml-1">✖️</button>
+          </form>
+        </ng-template>
+      </div>
+      <button
+        type="button"
+        (click)="delete(t.id); $event.stopPropagation()"
+        class="ml-2 text-red-600 hover:text-red-800 p-1 rounded-full hover:bg-red-100 transition"
+        title="Supprimer"
+      >🗑️</button>
     </li>
   </ul>
 
