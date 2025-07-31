@@ -35,7 +35,8 @@
     </button>
   </form>
 
-  <p *ngIf="!todoService.todos().length" class="italic text-gray-500">Aucune tâche</p>
+  <p *ngIf="!hasTodos" class="italic text-gray-500">Aucune tâche</p>
+
   <!-- Champ recherche séparé -->
   <input
     type="text"
@@ -43,6 +44,8 @@
     placeholder="Rechercher une tâche…"
     class="w-full border p-2 mb-4 rounded-lg"
   />
+
+  <!-- Filtres statut -->
   <div class="flex gap-2 mb-4">
     <button
       class="px-2 py-1 rounded"
@@ -63,7 +66,9 @@
       (click)="filter = 'done'"
     >Terminées</button>
   </div>
-  <div class="flex gap-2 mb-4">
+
+  <!-- Filtres tri + Archivage -->
+  <div class="flex gap-2 mb-4 flex-wrap">
     <button
       class="px-2 py-1 rounded"
       [class.bg-purple-600]="sort === 'none'"
@@ -82,9 +87,17 @@
       [class.text-white]="sort === 'alpha'"
       (click)="sort = 'alpha'"
     >Alphabétique</button>
+    <button
+      class="px-3 py-1 rounded bg-gray-600 text-white hover:bg-gray-800"
+      (click)="archiveDone()"
+      [disabled]="!hasDoneNotArchived"
+      title="Archive toutes les tâches terminées"
+    >
+      Archiver les tâches terminées
+    </button>
   </div>
 
-
+  <!-- Liste des tâches (hors archivées) -->
   <ul>
     <li
       *ngFor="let t of filteredTodos"
@@ -103,22 +116,25 @@
 
         <!-- Mode édition ou affichage -->
         <ng-container *ngIf="editId !== t.id; else editMode">
-      <span
-        (dblclick)="startEdit(t.id)"
-        [class.line-through]="t.done"
-        [class.text-gray-400]="t.done"
-        [class.text-red-600]="t.deadline && !t.done && t.deadline < today"
-        class="truncate"
-        title="Double-clique pour éditer"
-      >
-  <span [innerHTML]="t.label | capitalize | highlight:searchTerm"></span>
-  <span class="text-xs text-gray-500 ml-2">
-    ({{ t.createdAt | date:'shortTime' }})
-    <ng-container *ngIf="t.deadline">
-      | Échéance : <span [class.text-red-600]="!t.done && t.deadline < today">{{ t.deadline | date:'dd/MM/yyyy' }}</span>
-    </ng-container>
-  </span>
-</span>
+          <span
+            (dblclick)="startEdit(t.id)"
+            [class.line-through]="t.done"
+            [class.text-gray-400]="t.done"
+            [class.text-red-600]="t.deadline && !t.done && t.deadline < today"
+            class="truncate"
+            title="Double-clique pour éditer"
+          >
+            <span [innerHTML]="t.label | capitalize | highlight:searchTerm"></span>
+            <span class="text-xs text-gray-500 ml-2">
+              ({{ t.createdAt | date:'shortTime' }})
+              <ng-container *ngIf="t.deadline">
+                | Échéance :
+                <span [class.text-red-600]="!t.done && t.deadline < today">
+                  {{ t.deadline | date:'dd/MM/yyyy' }}
+                </span>
+              </ng-container>
+            </span>
+          </span>
         </ng-container>
         <ng-template #editMode>
           <form
@@ -152,8 +168,32 @@
     </li>
   </ul>
 
+  <!-- Récapitulatif -->
   <p class="mt-4 text-sm text-gray-600">
-    {{ filteredTodos.length }} tâche(s) affichée(s) | {{ todoService.remaining() }} à faire
+    {{ filteredTodos.length }} tâche(s) affichée(s) |
+    {{ todoService.remaining() }} à faire |
+    {{ archivedCount }} archivées |
+    {{ todoService.todos().length }} créées au total
   </p>
 
+  <!-- Affichage/Masquage des archives -->
+  <button
+    class="px-2 py-1 rounded bg-gray-300 hover:bg-gray-400 mt-2"
+    (click)="showArchives = !showArchives"
+    *ngIf="archivedCount"
+  >
+    {{ showArchives ? 'Masquer' : 'Afficher' }} les archives ({{ archivedCount }})
+  </button>
+  <ul *ngIf="showArchives">
+    <li *ngFor="let t of archivedTodos"
+        class="line-through text-gray-400 text-sm pl-2">
+      <span [innerHTML]="t.label | capitalize | highlight:searchTerm"></span>
+      <span class="text-xs text-gray-500 ml-2">
+        (créée le {{ t.createdAt | date:'dd/MM/yyyy' }})
+        <ng-container *ngIf="t.deadline">
+          | échéance : {{ t.deadline | date:'dd/MM/yyyy' }}
+        </ng-container>
+      </span>
+    </li>
+  </ul>
 </section>

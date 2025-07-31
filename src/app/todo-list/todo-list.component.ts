@@ -20,6 +20,20 @@ export class TodoListComponent {
   editId: number | null = null;
   searchTerm: string = '';
   sort: 'none' | 'date' | 'alpha' = 'none';
+  showArchives = false;
+
+  get hasTodos() {
+    return this.todoService.todos().some(t => !t.archived);
+  }
+  get hasDoneNotArchived() {
+    return this.todoService.todos().some(t => t.done && !t.archived);
+  }
+  get archivedCount() {
+    return this.todoService.todos().filter(t => t.archived).length;
+  }
+  get archivedTodos() {
+    return this.todoService.todos().filter(t => t.archived);
+  }
 
 
   constructor(public todoService: TodoService) {}
@@ -37,10 +51,13 @@ export class TodoListComponent {
     }
     this.endEdit();
   }
+  archiveDone() {
+    this.todoService.archiveDone();
+  }
 
 
   get filteredTodos() {
-    let todos = this.todoService.todos();
+    let todos = this.todoService.todos().filter(t => !t.archived);
 
     // Filtres existants
     if (this.filter === 'done') todos = todos.filter(t => t.done);

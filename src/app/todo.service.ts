@@ -6,6 +6,7 @@ export interface Todo {
   done: boolean;
   createdAt: Date;
   deadline?: Date;
+  archived?: boolean;
 }
 
 @Injectable({
@@ -30,7 +31,12 @@ export class TodoService {
     ]);
     this.save();
   }
-
+  archiveDone() {
+    this.todos.update(list =>
+      list.map(t => t.done ? { ...t, archived: true } : t)
+    );
+    this.save();
+  }
 
   toggle(todo: Todo) {
     this.todos.update(list =>
