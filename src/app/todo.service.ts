@@ -31,6 +31,26 @@ export class TodoService {
     ]);
     this.save();
   }
+  // Supprimer définitivement UNE archive
+  deleteArchived(id: number) {
+    this.todos.update(list => list.filter(t => !(t.id === id && t.archived)));
+    this.save();
+  }
+
+// Désarchiver UNE tâche
+  unarchive(id: number) {
+    this.todos.update(list => list.map(t =>
+      t.id === id ? { ...t, archived: false, done: false } : t
+    ));
+    this.save();
+  }
+
+// Supprimer toutes les archives
+  deleteAllArchived() {
+    this.todos.update(list => list.filter(t => !t.archived));
+    this.save();
+  }
+
   archiveDone() {
     this.todos.update(list =>
       list.map(t => t.done ? { ...t, archived: true } : t)
@@ -50,8 +70,8 @@ export class TodoService {
   save() {
     localStorage.setItem('todos', JSON.stringify(this.todos()));
   }
-  delete(todoId: number) {
-    this.todos.update(list => list.filter(t => t.id !== todoId));
+  delete(id: number) {
+    this.todos.update(list => list.filter(t => t.id !== id));
     this.save();
   }
 

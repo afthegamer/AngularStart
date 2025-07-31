@@ -1,18 +1,16 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CapitalizePipe } from '../shared/capitalize-pipe'; // ton chemin exact
+import { CapitalizePipe } from '../shared/capitalize-pipe';
 import { TodoService } from '../todo.service';
 import { FormsModule } from '@angular/forms';
 import { HighlightPipe } from '../highlight-pipe';
 
-
 @Component({
   selector: 'app-todo-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, CapitalizePipe,HighlightPipe],
+  imports: [CommonModule, FormsModule, CapitalizePipe, HighlightPipe],
   templateUrl: './todo-list.component.html',
   styleUrls: ['./todo-list.component.css'],
-
 })
 export class TodoListComponent {
   today = new Date();
@@ -21,6 +19,32 @@ export class TodoListComponent {
   searchTerm: string = '';
   sort: 'none' | 'date' | 'alpha' = 'none';
   showArchives = false;
+
+  // --- Confirmation d'action (modale personnalisée) ---
+  confirmation: {
+    action: 'deleteOne' | 'deleteAll' | 'deleteOneActive' | null,
+    taskId?: number
+  } = { action: null };
+
+  openConfirmation(action: 'deleteOne' | 'deleteAll' | 'deleteOneActive', taskId?: number) {
+    this.confirmation = { action, taskId };
+  }
+  closeConfirmation() {
+    this.confirmation = { action: null };
+  }
+  validateConfirmation() {
+    if (this.confirmation.action === 'deleteOne' && this.confirmation.taskId) {
+      this.todoService.deleteArchived(this.confirmation.taskId);
+    }
+    if (this.confirmation.action === 'deleteOneActive' && this.confirmation.taskId) {
+      this.todoService.delete(this.confirmation.taskId);
+    }
+    if (this.confirmation.action === 'deleteAll') {
+      this.todoService.deleteAllArchived();
+    }
+    this.closeConfirmation();
+  }
+  // ------------------------------------------------------
 
   get hasTodos() {
     return this.todoService.todos().some(t => !t.archived);
@@ -35,6 +59,9 @@ export class TodoListComponent {
     return this.todoService.todos().filter(t => t.archived);
   }
 
+  unarchive(id: number) {
+    this.todoService.unarchive(id);
+  }
 
   constructor(public todoService: TodoService) {}
   startEdit(todoId: number) {
@@ -55,7 +82,6 @@ export class TodoListComponent {
     this.todoService.archiveDone();
   }
 
-
   get filteredTodos() {
     let todos = this.todoService.todos().filter(t => !t.archived);
 
@@ -71,7 +97,6 @@ export class TodoListComponent {
 
     // Tri
     if (this.sort === 'date') {
-      // Trie par date d’échéance la copie, pas l’original
       return [...todos].sort((a, b) => {
         if (!a.deadline && !b.deadline) return 0;
         if (!a.deadline) return 1;
@@ -84,18 +109,12 @@ export class TodoListComponent {
         a.label.localeCompare(b.label, 'fr', { sensitivity: 'base' })
       );
     }
-    // Sinon : retourne le tableau sans tri (ordre création)
+    // Sinon : retourne le tableau sans tri (ordre création)
     return todos;
   }
 
   add(label: string, deadline?: string) {
     this.todoService.add(label, deadline);
-  }
-  delete(todoId: number) {
-    // Demande de confirmation (méthode simple JS)
-    if (confirm('Supprimer cette tâche ?')) {
-      this.todoService.delete(todoId);
-    }
   }
 
   toggle(todo: any) {
