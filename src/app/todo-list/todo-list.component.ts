@@ -25,10 +25,11 @@ export class TodoListComponent {
   endEdit() {
     this.editId = null;
   }
-  saveEdit(todo: any, input: HTMLInputElement) {
+  saveEdit(todo: any, input: HTMLInputElement, dateInput: HTMLInputElement) {
     const value = input.value.trim();
+    const dateValue = dateInput.value;
     if (value) {
-      this.todoService.edit(todo.id, value);
+      this.todoService.edit(todo.id, value, dateValue);
     }
     this.endEdit();
   }
@@ -41,8 +42,8 @@ export class TodoListComponent {
     return todos;
   }
 
-  add(label: string) {
-    this.todoService.add(label);
+  add(label: string, deadline?: string) {
+    this.todoService.add(label, deadline);
   }
   delete(todoId: number) {
     // Demande de confirmation (méthode simple JS)

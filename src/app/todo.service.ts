@@ -5,6 +5,7 @@ export interface Todo {
   label: string;
   done: boolean;
   createdAt: Date;
+  deadline?: Date;
 }
 
 @Injectable({
@@ -14,15 +15,22 @@ export class TodoService {
   private nextId = 1;
   todos = signal<Todo[]>([]);
 
-  add(label: string) {
+  add(label: string, deadline?: string) {
     const trimmed = label.trim();
     if (!trimmed) return;
     this.todos.update(list => [
       ...list,
-      { id: this.nextId++, label: trimmed, done: false, createdAt: new Date() },
+      {
+        id: this.nextId++,
+        label: trimmed,
+        done: false,
+        createdAt: new Date(),
+        deadline: deadline ? new Date(deadline) : undefined
+      },
     ]);
     this.save();
   }
+
 
   toggle(todo: Todo) {
     this.todos.update(list =>
@@ -48,18 +56,23 @@ export class TodoService {
       const parsed = JSON.parse(data);
       this.todos.set(parsed.map((t: any) => ({
         ...t,
-        createdAt: new Date(t.createdAt)
+        createdAt: new Date(t.createdAt),
+        deadline: t.deadline ? new Date(t.deadline) : undefined
       })));
       if (parsed.length) {
         this.nextId = Math.max(...parsed.map((t: any) => t.id)) + 1;
       }
     }
   }
-  edit(todoId: number, newLabel: string) {
+  edit(todoId: number, newLabel: string, newDeadline?: string) {
     this.todos.update(list =>
       list.map(t =>
         t.id === todoId
-          ? { ...t, label: newLabel.trim() || t.label }
+          ? {
+            ...t,
+            label: newLabel.trim() || t.label,
+            deadline: newDeadline ? new Date(newDeadline) : undefined
+          }
           : t
       )
     );

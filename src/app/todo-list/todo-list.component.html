@@ -13,12 +13,19 @@
 
   <form
     class="flex gap-2 mb-4"
-    (submit)="add(task.value); task.value=''; $event.preventDefault()"
+    (submit)="add(task.value, deadline.value); task.value=''; deadline.value=''; $event.preventDefault()"
   >
     <input
       #task
       class="flex-1 border p-2 rounded-lg"
       placeholder="Nouvelle tâche"
+    />
+    <input
+      #deadline
+      type="date"
+      class="border p-2 rounded-lg"
+      style="width: 160px"
+      placeholder="Échéance"
     />
     <button
       type="submit"
@@ -73,26 +80,36 @@
         (dblclick)="startEdit(t.id)"
         [class.line-through]="t.done"
         [class.text-gray-400]="t.done"
+        [class.text-red-600]="t.deadline && !t.done && t.deadline < today"
         class="truncate"
         title="Double-clique pour éditer"
       >
-        {{ t.label | capitalize }}
+  {{ t.label | capitalize }}
         <span class="text-xs text-gray-500 ml-2">
-          ({{ t.createdAt | date:'shortTime' }})
-        </span>
-      </span>
+    ({{ t.createdAt | date:'shortTime' }})
+    <ng-container *ngIf="t.deadline">
+      | Échéance : <span [class.text-red-600]="!t.done && t.deadline < today">{{ t.deadline | date:'dd/MM/yyyy' }}</span>
+    </ng-container>
+  </span>
+</span>
         </ng-container>
         <ng-template #editMode>
           <form
             class="flex-1 flex gap-2"
-            (submit)="saveEdit(t, editInput); $event.preventDefault()"
+            (submit)="saveEdit(t, editInput, editDate); $event.preventDefault()"
           >
             <input
               #editInput
               [value]="t.label"
               class="flex-1 border p-1 rounded"
-              (blur)="saveEdit(t, editInput)"
+              (blur)="saveEdit(t, editInput, editDate)"
               autofocus
+            />
+            <input
+              #editDate
+              type="date"
+              [value]="t.deadline ? (t.deadline | date:'yyyy-MM-dd') : ''"
+              class="border p-1 rounded w-32"
             />
             <button type="submit" class="text-green-600 hover:text-green-800">✔️</button>
             <button type="button" (click)="endEdit()" class="text-gray-600 ml-1">✖️</button>
