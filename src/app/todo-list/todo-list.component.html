@@ -36,6 +36,13 @@
   </form>
 
   <p *ngIf="!todoService.todos().length" class="italic text-gray-500">Aucune tâche</p>
+  <!-- Champ recherche séparé -->
+  <input
+    type="text"
+    [(ngModel)]="searchTerm"
+    placeholder="Rechercher une tâche…"
+    class="w-full border p-2 mb-4 rounded-lg"
+  />
   <div class="flex gap-2 mb-4">
     <button
       class="px-2 py-1 rounded"
