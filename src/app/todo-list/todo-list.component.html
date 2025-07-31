@@ -90,6 +90,7 @@
         [class.text-red-600]="t.deadline && !t.done && t.deadline < today"
         class="truncate"
         title="Double-clique pour éditer"
+        [innerHTML]="t.label | capitalize | highlight:searchTerm"
       >
   {{ t.label | capitalize }}
         <span class="text-xs text-gray-500 ml-2">

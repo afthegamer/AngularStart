@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { CapitalizePipe } from '../shared/capitalize-pipe'; // ton chemin exact
 import { TodoService } from '../todo.service';
 import { FormsModule } from '@angular/forms';
+import { HighlightPipe } from '../highlight-pipe';
+
 
 @Component({
   selector: 'app-todo-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, CapitalizePipe],
+  imports: [CommonModule, FormsModule, CapitalizePipe,HighlightPipe],
   templateUrl: './todo-list.component.html',
   styleUrls: ['./todo-list.component.css'],
 
