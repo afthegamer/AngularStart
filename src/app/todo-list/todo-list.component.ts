@@ -9,11 +9,21 @@ import { TodoService } from '../todo.service';
   imports: [CommonModule, CapitalizePipe],
   templateUrl: './todo-list.component.html',
   styleUrls: ['./todo-list.component.css'],
+
 })
 export class TodoListComponent {
   today = new Date();
+  filter: 'all' | 'done' | 'todo' = 'all';
+
 
   constructor(public todoService: TodoService) {}
+
+  get filteredTodos() {
+    const todos = this.todoService.todos();
+    if (this.filter === 'done') return todos.filter(t => t.done);
+    if (this.filter === 'todo') return todos.filter(t => !t.done);
+    return todos;
+  }
 
   add(label: string) {
     this.todoService.add(label);

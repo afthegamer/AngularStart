@@ -29,10 +29,31 @@
   </form>
 
   <p *ngIf="!todoService.todos().length" class="italic text-gray-500">Aucune tâche</p>
+  <div class="flex gap-2 mb-4">
+    <button
+      class="px-2 py-1 rounded"
+      [class.bg-blue-600]="filter === 'all'"
+      [class.text-white]="filter === 'all'"
+      (click)="filter = 'all'"
+    >Toutes</button>
+    <button
+      class="px-2 py-1 rounded"
+      [class.bg-blue-600]="filter === 'todo'"
+      [class.text-white]="filter === 'todo'"
+      (click)="filter = 'todo'"
+    >À faire</button>
+    <button
+      class="px-2 py-1 rounded"
+      [class.bg-blue-600]="filter === 'done'"
+      [class.text-white]="filter === 'done'"
+      (click)="filter = 'done'"
+    >Terminées</button>
+  </div>
+
 
   <ul>
     <li
-      *ngFor="let t of todoService.todos()"
+      *ngFor="let t of filteredTodos"
       (click)="toggle(t)"
       [class.line-through]="t.done"
       class="cursor-pointer py-1 hover:bg-slate-100 flex justify-between items-center"
@@ -54,9 +75,8 @@
     </li>
   </ul>
 
-
   <p class="mt-4 text-sm text-gray-600">
-    {{ todoService.remaining() }} tâche(s) restante(s)
+    {{ filteredTodos.length }} tâche(s) affichée(s) | {{ todoService.remaining() }} à faire
   </p>
 
 </section>
