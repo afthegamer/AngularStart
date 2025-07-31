@@ -63,6 +63,26 @@
       (click)="filter = 'done'"
     >Terminées</button>
   </div>
+  <div class="flex gap-2 mb-4">
+    <button
+      class="px-2 py-1 rounded"
+      [class.bg-purple-600]="sort === 'none'"
+      [class.text-white]="sort === 'none'"
+      (click)="sort = 'none'"
+    >Ordre original</button>
+    <button
+      class="px-2 py-1 rounded"
+      [class.bg-purple-600]="sort === 'date'"
+      [class.text-white]="sort === 'date'"
+      (click)="sort = 'date'"
+    >Par date d’échéance</button>
+    <button
+      class="px-2 py-1 rounded"
+      [class.bg-purple-600]="sort === 'alpha'"
+      [class.text-white]="sort === 'alpha'"
+      (click)="sort = 'alpha'"
+    >Alphabétique</button>
+  </div>
 
 
   <ul>
@@ -90,10 +110,9 @@
         [class.text-red-600]="t.deadline && !t.done && t.deadline < today"
         class="truncate"
         title="Double-clique pour éditer"
-        [innerHTML]="t.label | capitalize | highlight:searchTerm"
       >
-  {{ t.label | capitalize }}
-        <span class="text-xs text-gray-500 ml-2">
+  <span [innerHTML]="t.label | capitalize | highlight:searchTerm"></span>
+  <span class="text-xs text-gray-500 ml-2">
     ({{ t.createdAt | date:'shortTime' }})
     <ng-container *ngIf="t.deadline">
       | Échéance : <span [class.text-red-600]="!t.done && t.deadline < today">{{ t.deadline | date:'dd/MM/yyyy' }}</span>

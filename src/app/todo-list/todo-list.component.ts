@@ -19,6 +19,8 @@ export class TodoListComponent {
   filter: 'all' | 'done' | 'todo' = 'all';
   editId: number | null = null;
   searchTerm: string = '';
+  sort: 'none' | 'date' | 'alpha' = 'none';
+
 
   constructor(public todoService: TodoService) {}
   startEdit(todoId: number) {
@@ -39,14 +41,33 @@ export class TodoListComponent {
 
   get filteredTodos() {
     let todos = this.todoService.todos();
+
+    // Filtres existants
     if (this.filter === 'done') todos = todos.filter(t => t.done);
     if (this.filter === 'todo') todos = todos.filter(t => !t.done);
 
+    // Filtre recherche
     if (this.searchTerm.trim()) {
       const term = this.searchTerm.trim().toLowerCase();
       todos = todos.filter(t => t.label.toLowerCase().includes(term));
     }
 
+    // Tri
+    if (this.sort === 'date') {
+      // Trie par date d’échéance la copie, pas l’original
+      return [...todos].sort((a, b) => {
+        if (!a.deadline && !b.deadline) return 0;
+        if (!a.deadline) return 1;
+        if (!b.deadline) return -1;
+        return a.deadline.getTime() - b.deadline.getTime();
+      });
+    }
+    if (this.sort === 'alpha') {
+      return [...todos].sort((a, b) =>
+        a.label.localeCompare(b.label, 'fr', { sensitivity: 'base' })
+      );
+    }
+    // Sinon : retourne le tableau sans tri (ordre création)
     return todos;
   }
 
