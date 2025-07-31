@@ -54,24 +54,38 @@
   <ul>
     <li
       *ngFor="let t of filteredTodos"
-      (click)="toggle(t)"
-      [class.line-through]="t.done"
       class="cursor-pointer py-1 hover:bg-slate-100 flex justify-between items-center"
     >
-    <span>
+      <ng-container *ngIf="editId !== t.id; else editMode">
+    <span (dblclick)="startEdit(t.id)" [class.line-through]="t.done">
       {{ t.label | capitalize }}
       <span class="text-xs text-gray-500 ml-2">
         ({{ t.createdAt | date:'shortTime' }})
       </span>
     </span>
-      <button
-        type="button"
-        (click)="delete(t.id); $event.stopPropagation()"
-        class="ml-2 text-red-600 hover:text-red-800 p-1 rounded-full hover:bg-red-100 transition"
-        title="Supprimer"
-      >
-        🗑️
-      </button>
+        <button
+          type="button"
+          (click)="delete(t.id); $event.stopPropagation()"
+          class="ml-2 text-red-600 hover:text-red-800 p-1 rounded-full hover:bg-red-100 transition"
+          title="Supprimer"
+        >🗑️</button>
+      </ng-container>
+      <ng-template #editMode>
+        <form
+          class="flex-1 flex gap-2"
+          (submit)="saveEdit(t, editInput); $event.preventDefault()"
+        >
+          <input
+            #editInput
+            [value]="t.label"
+            class="flex-1 border p-1 rounded"
+            (blur)="saveEdit(t, editInput)"
+            autofocus
+          />
+          <button type="submit" class="text-green-600 hover:text-green-800">✔️</button>
+          <button type="button" (click)="endEdit()" class="text-gray-600 ml-1">✖️</button>
+        </form>
+      </ng-template>
     </li>
   </ul>
 

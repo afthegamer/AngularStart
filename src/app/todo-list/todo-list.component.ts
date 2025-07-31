@@ -14,9 +14,25 @@ import { TodoService } from '../todo.service';
 export class TodoListComponent {
   today = new Date();
   filter: 'all' | 'done' | 'todo' = 'all';
+  editId: number | null = null;
+
 
 
   constructor(public todoService: TodoService) {}
+  startEdit(todoId: number) {
+    this.editId = todoId;
+  }
+  endEdit() {
+    this.editId = null;
+  }
+  saveEdit(todo: any, input: HTMLInputElement) {
+    const value = input.value.trim();
+    if (value) {
+      this.todoService.edit(todo.id, value);
+    }
+    this.endEdit();
+  }
+
 
   get filteredTodos() {
     const todos = this.todoService.todos();

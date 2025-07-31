@@ -55,6 +55,16 @@ export class TodoService {
       }
     }
   }
+  edit(todoId: number, newLabel: string) {
+    this.todos.update(list =>
+      list.map(t =>
+        t.id === todoId
+          ? { ...t, label: newLabel.trim() || t.label }
+          : t
+      )
+    );
+    this.save();
+  }
 
   constructor() {
     this.load();
